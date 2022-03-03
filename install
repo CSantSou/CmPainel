@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+
+if [[ `command -v tput` && `command -v grep` && `command -v tr` && `command -v awk` && `command -v jq` && `command -v curl` ]]; then
+        echo -e "\nTodos pacotes estão instalados."
+else
+        pkgs=(ncurses-utils grep gawk coreutils jq curl)
+        for pkg in "${pkgs[@]}"; do
+                type -p "$pkg" &> /dev/null || {
+                        echo -e "\nInstalando o Pacote: $pkg\n"
+                if [[ `command -v pkg` ]]; then
+                        pkg install "$pkg" -y
+
+                elif [[ `command -v apt-get` ]]; then
+                        apt-get install "$pkg" -y
+
+                elif [[ `command -v pacman` ]]; then
+                        sudo pacman -S "$pkg" --noconfirm
+
+                elif [[ `command -v dnf` ]]; then
+                        sudo dnf -y install "$pkg"
+                fi
+        }
+        done
+fi 
